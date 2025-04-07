@@ -15,6 +15,7 @@ router.post('/register',async (req,res)=>{
             const response = await UserCredentials.create({username,
                 password
             })
+
             res.json({status: "successful"})
             return
         }
@@ -47,6 +48,13 @@ router.post('/login',async (req,res)=>{
                 res.json({
                     token:token
                 })
+                // res.cookie("token",{
+                //     httpOnly:true,
+                //     secure:true,
+                //     sameSite:"Strict",
+                //     maxAge:7*24*60*60*1000
+
+                // })
                 return
             }
             catch(err){
@@ -69,10 +77,12 @@ router.post('/login',async (req,res)=>{
 })
 router.get('/tasks',middleware, async (req,res)=>{
     //this gets all the tasks of a user
+    console.log("middleware passed")
     try{
         const username = req.username
         console.log(username)
         const response = await UserTsks.find({username:username});
+        console.log(response)
         res.send(response)
     }
     catch(err){
@@ -86,10 +96,10 @@ router.get('/tasks',middleware, async (req,res)=>{
 router.post('/tasks',middleware, async (req,res)=>{
     try{
         const username = req.username
-        const {task,stats} = req.body
+        const {task} = req.body
+        console.log(task)
         const response = await UserTsks.create({username,
             task,
-            stats
         })
         res.json({
             status: "task created successfully",
@@ -149,10 +159,7 @@ router.get('/search',middleware, async (req,res)=>{
             $regex:`^${search}`,$options:'i'
         }})
         if(response.length != 0){
-            res.json({
-                status:"successfull",
-                data:response
-            })
+            res.send(response)
         }
         else{
             res.json({
@@ -179,10 +186,7 @@ router.get('/filter',middleware, async (req,res)=>{
             $regex:`^${search}`,$options:'i'
         }})
          console.log(response)
-        res.json({
-            status:"successfull",
-            data:response
-        })
+        res.send(response)
     }
     catch(err){
         console.log(err)

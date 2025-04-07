@@ -119,7 +119,8 @@ router.put('/tasks/:id',middleware, async (req,res)=>{
         const id = req.params.id
         console.log(id)
         const {task,stats} = req.body
-        const response = await UserTsks.findByIdAndUpdate({id},{
+        console.log(task,stats)
+        const response = await UserTsks.findByIdAndUpdate(id,{
             task,
             stats,
         })
@@ -130,7 +131,7 @@ router.put('/tasks/:id',middleware, async (req,res)=>{
     }
     catch(err){
         console.log(err)
-        res.json({
+        res.status(500).json({
             data: "Database not responding"
         })
     }
@@ -150,10 +151,11 @@ router.delete('/tasks/:id',middleware, async (req,res)=>{
         })
     }
 })
-router.get('/search',middleware, async (req,res)=>{
+router.get('/search/:id',middleware, async (req,res)=>{
     try{
-        const search = req.body.search
+        const search = req.params.id
         const username = req.username
+        console.log(search,username)
         const response = await UserTsks.find({username: username,
             task:{
             $regex:`^${search}`,$options:'i'
@@ -164,7 +166,8 @@ router.get('/search',middleware, async (req,res)=>{
         else{
             res.json({
                 status:"Couldn't find any",
-                data:response
+                data:response,
+                length:0
             })
         }
        
@@ -178,10 +181,11 @@ router.get('/search',middleware, async (req,res)=>{
     
 })
 
-router.get('/filter',middleware, async (req,res)=>{
+router.post('/filter',middleware, async (req,res)=>{
     try{
         const search = req.body.status
         const username = req.username
+        console.log("reached filter")
         const response = await UserTsks.find({username:username,stats:{
             $regex:`^${search}`,$options:'i'
         }})

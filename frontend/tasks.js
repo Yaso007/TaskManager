@@ -1,6 +1,17 @@
 
 
 var globalUser
+function logout(){
+    $("#logOutBtn").on("click",()=>{
+        alert("Are you sure you want to logout?")
+        localStorage.removeItem('name')
+        localStorage.removeItem(globalUser)
+        setTimeout(()=>{
+            window.location.href ='./index.html'
+           },4000) 
+        
+    })
+}
 function getToken(){
     //console.log(globalUser)
     const username = localStorage.getItem(globalUser)
@@ -298,6 +309,7 @@ window.onload = async function () {
     addPending()
     addCompleted()
     addSearch()
+    logout()
     const token = localStorage.getItem(username)
     console.log(token)
     try{

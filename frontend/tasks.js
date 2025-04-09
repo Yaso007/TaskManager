@@ -1,6 +1,16 @@
 
 
 var globalUser
+function sorry(){
+    $(".tasks").empty()
+    $(".tasks").append(`<div id="sorry"><img id="sad" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjNseG9yejFpenBtdmd2a2JmeHlsdDgxY29zMGYxMXdvdzdxcXo5ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ChX3hzy5CkXsI/giphy.gif" alt="">
+        <p>Sorry we found nothing that matches the entered string</p></div>`)
+}
+function zeroTasks(){
+    $(".tasks").empty()
+    $(".tasks").append(`<div id="sorry"><img src="https://cdn.dribbble.com/userupload/13318930/file/original-02c200635a6d657f23bd87b0cbca1524.jpg?resize=1600x1200&vertical=center" alt="">
+        <p>No tasks are there</p></div>`)
+}
 function logout(){
     $("#logOutBtn").on("click",()=>{
         alert("Are you sure you want to logout?")
@@ -8,7 +18,7 @@ function logout(){
         localStorage.removeItem(globalUser)
         setTimeout(()=>{
             window.location.href ='./index.html'
-           },4000) 
+           },1000) 
         
     })
 }
@@ -34,9 +44,12 @@ function addSearch(){
               
                 const data = await res.json()
                 console.log(data)
-                console.log("tasks should be emptied")
-                $(".tasks").empty()
-                listResponse(data,token)
+                if(data.length !=0){
+                    $(".tasks").empty()
+                    listResponse(data,token)
+                }
+                else sorry()
+                
                 
             }
             else{
@@ -70,8 +83,12 @@ async function addAll(){
       
             if (response.ok) {
               const data = await response.json();
-              console.log("All Tasks:", data);
-              listResponse(data, token);
+              if(data.length !=0){
+                $(".tasks").empty()
+                listResponse(data,token)
+            }
+            else zeroTasks()
+           
             }
           } catch (err) {
             console.log(err);
@@ -82,7 +99,8 @@ async function addAll(){
 }
 async function addPending(){
     $("#pending").on("click",async ()=>{
-        $(this).css("background-color","#1ecbe1")
+        $("#pending").css("background-color","#1ecbe1")
+        $("#completed").css("background-color","white")
         $("#all").css("background-color","white")
         $(".tasks").empty()
         try{
@@ -100,8 +118,11 @@ async function addPending(){
               })
             if(response.ok){
                 const data = await response.json()
-                console.log(data)
-                listResponse(data,token)
+                if(data.length !=0){
+                    $(".tasks").empty()
+                    listResponse(data,token)
+                }
+                else zeroTasks()
             }
         }
         catch(e){
@@ -133,9 +154,13 @@ async function addCompleted(){
               })
             if(response.ok){
                 const data = await response.json()
-                console.log(data)
-                listResponse(data,token)
+                if(data.length !=0){
+                    $(".tasks").empty()
+                    listResponse(data,token)
+                }
+                else zeroTasks()
             }
+            
         }
         catch(e){
             console.log(e)
@@ -277,7 +302,7 @@ window.onload = async function () {
     //console.log(globalUser)
     //console.log(getToken())
     if (username) {
-      document.querySelector("h2").innerText = `${username}`;
+      document.querySelector("h2").innerText = `Welcome ${username}`;
     }
     $("#create").on("click",async (e)=>{
         e.preventDefault()
@@ -324,14 +349,17 @@ window.onload = async function () {
   
       if(response.ok){
           const data = await response.json()
-          console.log(data)
-          listResponse(data,token)
+          if(data.length !=0){
+            $(".tasks").empty()
+            listResponse(data,token)
+        }
+        else zeroTasks()
+    }
          
-      }
+    
     }
     catch(err){
         console.log(err)
     }
 
   };
-

@@ -40,7 +40,7 @@ router.post('/login',async (req,res)=>{
 
         const check = await UserCredentials.find({username,password})
         console.log(check)
-        if(check){
+        if(check.length !=0){
             try{
                 const token = await jwt.sign({username: username}, ACCESS_TOKEN)
                 console.log(token)
@@ -64,7 +64,7 @@ router.post('/login',async (req,res)=>{
                 })
             }
         }
-        res.json({
+        res.status(404).json({
             reason:"You're not registered"
         })
     }
